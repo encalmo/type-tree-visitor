@@ -2,6 +2,17 @@
 
 # type-tree-visitor
 
+## Table of contents
+
+- [Motivation](#motivation)
+- [Dependencies](#dependencies)
+- [Usage](#usage)
+- [How to start?](#how-to-start?)
+- [Examples](#examples)
+   - [[XmlWriter](https://github.com/encalmo/xmlwriter)](#[xmlwriter](https://github.com/encalmo/xmlwriter))
+   - [[StructuralRuntimeHashcode](StructuralRuntimeHashcode.scala)](#[structuralruntimehashcode](structuralruntimehashcode.scala))
+   - [[ValuePathsList](ValuePathsList.scala)](#[valuepathslist](valuepathslist.scala))
+
 ## Motivation
 
 This library provides `TypeTreeIterator` object and `TypeTreeVisitor` trait, two essential building blocks for Scala 3 macros aiming at efficiently and effortlessly deriving code based on some type tree traversal. The pattern implemented here has been developed for and later extracted from the [xmlwriter](https://github.com/encalmo/xmlwriter) macro codebase. While there are multiple established ways of implementing macros using inline/mirrors, or quotes/splices, or [hearth](https://github.com/MateuszKubuszok/hearth) library, there can be multiple reasons to use this toolset instead:
@@ -18,7 +29,8 @@ This library provides `TypeTreeIterator` object and `TypeTreeVisitor` trait, two
 
 ## Dependencies
 
-- Scala >= 3.7.4
+   - [Scala](https://www.scala-lang.org) >= 3.7.4
+   - org.encalmo [**macro-utils** 0.14.0](https://central.sonatype.com/artifact/org.encalmo/macro-utils_3)
 
 ## Usage
 
@@ -116,4 +128,30 @@ import org.encalmo.utils.ValuePathsList
 val instance = ...
 val paths: List[String] = ValuePathsList.compute(instance)
 println(paths.mkString("\n"))
+```
+
+
+## Project content
+
+```
+├── .github
+│   └── workflows
+│       ├── pages.yaml
+│       ├── release.yaml
+│       └── test.yaml
+│
+├── .gitignore
+├── .scalafmt.conf
+├── LICENSE
+├── project.scala
+├── README.md
+├── SimpleTypeTreeVisitor.scala
+├── StructuralRuntimeHashcode.scala
+├── StructuralRuntimeHashcode.test.scala
+├── TagName.scala
+├── test.sh
+├── TypeTreeIterator.scala
+├── TypeTreeVisitor.scala
+├── ValuePathList.test.scala
+└── ValuesPathList.scala
 ```
