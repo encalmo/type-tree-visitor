@@ -1,4 +1,4 @@
-<a href="https://central.sonatype.com/artifact/org.encalmo/type-tree-visitor_3" target="_blank">![Maven Central Version](https://img.shields.io/maven-central/v/org.encalmo/type-tree-visitor_3?style=for-the-badge)</a> <a href="https://encalmo.github.io/type-tree-visitor/scaladoc/org/encalmo/utils.html" target="_blank"><img alt="Scaladoc" src="https://img.shields.io/badge/docs-scaladoc-red?style=for-the-badge"></a>
+<a href="https://github.com/encalmo/type-tree-visitor">![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)</a> <a href="https://central.sonatype.com/artifact/org.encalmo/type-tree-visitor_3" target="_blank">![Maven Central Version](https://img.shields.io/maven-central/v/org.encalmo/type-tree-visitor_3?style=for-the-badge)</a> <a href="https://encalmo.github.io/type-tree-visitor/scaladoc/org/encalmo/utils.html" target="_blank"><img alt="Scaladoc" src="https://img.shields.io/badge/docs-scaladoc-red?style=for-the-badge"></a>
 
 # type-tree-visitor
 
@@ -12,6 +12,7 @@
    - [[XmlWriter](https://github.com/encalmo/xmlwriter)](#[xmlwriter](https://github.com/encalmo/xmlwriter))
    - [[StructuralRuntimeHashcode](StructuralRuntimeHashcode.scala)](#[structuralruntimehashcode](structuralruntimehashcode.scala))
    - [[ValuePathsList](ValuePathsList.scala)](#[valuepathslist](valuepathslist.scala))
+- [Project content](#project-content)
 
 ## Motivation
 
@@ -155,3 +156,4 @@ println(paths.mkString("\n"))
 ├── ValuePathList.test.scala
 └── ValuesPathList.scala
 ```
+
