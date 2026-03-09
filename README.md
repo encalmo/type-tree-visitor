@@ -8,7 +8,13 @@
 - [Dependencies](#dependencies)
 - [Usage](#usage)
 - [How to start?](#how-to-start?)
-- [Examples](#examples)
+- [Term-less iterator and visitor](#term-less-iterator-and-visitor)
+- [How to work with typeclasses?](#how-to-work-with-typeclasses?)
+   - [Summoning existing typeclasses](#summoning-existing-typeclasses)
+   - [Deriving typeclass instances autonomously using macro](#deriving-typeclass-instances-autonomously-using-macro)
+   - [Providing typeclass instances semi-autonomously](#providing-typeclass-instances-semi-autonomously)
+   - [Preventing circular derivation calls](#preventing-circular-derivation-calls)
+- [Examples of macro](#examples-of-macro)
    - [[XmlWriter](https://github.com/encalmo/xmlwriter)](#[xmlwriter](https://github.com/encalmo/xmlwriter))
    - [[StructuralRuntimeHashcode](StructuralRuntimeHashcode.scala)](#[structuralruntimehashcode](structuralruntimehashcode.scala))
    - [[ValuePathsList](ValuePathsList.scala)](#[valuepathslist](valuepathslist.scala))
@@ -32,7 +38,7 @@ This library provides `TypeTreeIterator` object and `TypeTreeVisitor` trait, two
 ## Dependencies
 
    - [Scala](https://www.scala-lang.org) >= 3.7.4
-   - org.encalmo [**macro-utils** 0.14.0](https://central.sonatype.com/artifact/org.encalmo/macro-utils_3)
+   - org.encalmo [**macro-utils** 0.21.0](https://central.sonatype.com/artifact/org.encalmo/macro-utils_3)
 
 ## Usage
 
@@ -230,15 +236,24 @@ println(paths.mkString("\n"))
 │
 ├── .gitignore
 ├── .scalafmt.conf
+├── Hashcode.scala
+├── InternalStructureHashcode.scala
+├── InternalStructureHashcode.test.scala
 ├── LICENSE
+├── Order.java
 ├── project.scala
 ├── README.md
+├── SimpleTypeTreeTermlessVisitor.scala
 ├── SimpleTypeTreeVisitor.scala
+├── Status.java
 ├── StructuralRuntimeHashcode.scala
 ├── StructuralRuntimeHashcode.test.scala
 ├── TagName.scala
 ├── test.sh
+├── TestModel.test.scala
 ├── TypeTreeIterator.scala
+├── TypeTreeTermlessIterator.scala
+├── TypeTreeTermlessVisitor.scala
 ├── TypeTreeVisitor.scala
 ├── ValuePathList.test.scala
 └── ValuesPathList.scala
