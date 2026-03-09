@@ -9,6 +9,8 @@ object TagName {
   def apply(value: String): TagName = value
   def apply(using cache: StatementsCache)(value: cache.quotes.reflect.Term): TagName =
     (cache2: StatementsCache) ?=> value.asInstanceOf[cache2.quotes.reflect.Term]
+
+  def none: TagName = "<none>"
 }
 
 extension (tagName: TagName) {

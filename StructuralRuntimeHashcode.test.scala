@@ -1,5 +1,7 @@
 package org.encalmo.utils
 
+import java.time.LocalDate
+
 class StructuralRuntimeHashcodeSpec extends munit.FunSuite {
 
   import StructuralRuntimeHashcode.compute
@@ -37,6 +39,44 @@ class StructuralRuntimeHashcodeSpec extends munit.FunSuite {
     assertEquals(compute(example1), compute(example2))
     assertNotEquals(compute(example1), compute(example3))
     assertNotEquals(compute(example2), compute(example3))
+  }
+
+  test("compute the structural hashcode of a Person case class") {
+    val person1 = Person(
+      id = "1234567890",
+      name = "John Doe",
+      age = 30,
+      stature = 1.80,
+      email = Some("john.doe@example.com"),
+      address = Some(Address(street = "123 Main St", city = "Anytown", postcode = "12345")),
+      addresses = Some(Map("home" -> Address(street = "123 Main St", city = "Anytown", postcode = "12345"))),
+      isStudent = false,
+      tags = List(tag(name = "tag1", value = "value1")),
+      citizenship = Citizenship.UK,
+      immigrationStatus = Some(new ImmigrationStatus {
+        def status: String = "valid"
+        def validUntil: LocalDate = LocalDate.now()
+      }),
+      maritalStatus = Array(MaritalStatus.Single),
+      hobbies = List(Hobby.Reading),
+      hobby = Hobby.Reading,
+      passportNumber = Some(PassportNumber("1234567890")),
+      driverLicense = Some(DriverLicense(number = "1234567890", expiryDate = LocalDate.now())),
+      disabilities = List(Disability(value = "disability1")),
+      disability = Disability(value = "disability1"),
+      benefits1 = List(Benefit.ChildBenefit),
+      benefits2 = List(Benefit.ChildBenefit),
+      skills = Skills("skill1", "skill2"),
+      wallet = (1, "wallet1", LocalDate.now()),
+      assets = (Cars.Ford, Boats("boat1"), Boeing("Boeing 747")),
+      books = List(("author1", "title1"), ("author2", "title2")),
+      bookAtDesk = ("author3", "title3"),
+      hand1 = Left("hand1"),
+      hand2 = Right("hand2"),
+      status = Status.ACTIVE,
+      active = YesNo(true)
+    )
+    compute(person1)
   }
 
 }

@@ -21,10 +21,11 @@ This library provides `TypeTreeIterator` object and `TypeTreeVisitor` trait, two
 - familiar [visitor pattern](https://refactoring.guru/design-patterns/visitor)
 - full support for manual, autonomous and semi-autonomous typeclass derivation modes
 - algorithm split into fully implemented `iterator` object and open to extension `visitor` trait
-- handy `StatementsCache` abstraction from [macro-utils](https://github.com/encalmo/macro-utils) instead of a bit problematic `Quotes`, with built-in support for nested scopes, reference and symbol cache, plus wrapping of a recurrent code in chunked methods on demand,
+- handy `StatementsCache` abstraction from [macro-utils](https://github.com/encalmo/macro-utils) instead of a bit problematic `Quotes`, with built-in support for nested scopes, reference and symbol cache, plus wrapping of a recurrent code in chunked methods on demand
 - good coverage of popular and new types:
    - Scala case classes, sealed traits, collections, arrays, enums, tuples, named tuples, selectables, named types, opaque types, and primitives
    - Java enums, records, maps, iterables, and primitives
+- easy access to annotations defined on types, values and fields
 - support for a custom type context instance carried over type tree iteration
 - all (rechargable) batteries included
 
@@ -84,7 +85,9 @@ object MyMacro {
       isCollectionItem = false,
       annotations = Set.empty,
       trace = trace,
-      debugIndent = if debugMode then 0 else Int.MinValue
+      debugIndent = if debugMode then 0 else Int.MinValue,
+      summonTypeclassInstance = false // to prevent circular calls from derivation logic 
+                                      // the top call must not summon the typeclass
     )
     context.finalize(using cache)
 
@@ -103,7 +106,91 @@ object MyMacro {
 
 where `MyMacroVisitor` is an object implementing either full `TypeTreeVisitor` or a simplified `SimpleTypeTreeVisitor` to do the actual code-building business.
 
-## Examples
+## Term-less iterator and visitor
+
+When generated code does not need to access the actual value of the type, i.e. `valueTerm` then there is a faster and simpler `TypeTreeTermlessIterator` available accepting `TypeTreeTermlessVisitor`.
+
+## How to work with typeclasses?
+
+### Summoning existing typeclasses
+
+The `TypeTreeVisitor` interface provides a method `maybeSummonTypeclassInstance`. Override this method with an implementation like below. If the instance of the typeclass is known for any of the types in your type tree it will be used instead of traversing the tree further down at this point.
+
+```scala
+inline override def maybeSummonTypeclassInstance(using
+      cache: StatementsCache
+  )(
+    tpe: cache.quotes.reflect.TypeRepr, 
+    valueTerm: cache.quotes.reflect.Term, 
+    context: Context
+  ): Option[Unit] = {
+    given cache.quotes.type = cache.quotes
+    import cache.quotes.reflect.*
+
+    tpe.asType match {
+      case '[a] =>
+        Expr.summon[MyTypeclass[a]].map { instance =>
+          cache.put(
+            instance.asTerm.methodCall(
+              "myMethod", // your typeclass method name
+              List(
+                ... // here goes your typeclass method parameters
+              )
+            )
+          )
+        }
+    }
+  }
+```
+
+### Deriving typeclass instances autonomously using macro
+
+Your typeclass companion object can have the method deriving instances autonomously using the macro:
+
+```scala
+case class X() derives MyTypeclass
+
+trait MyTypeclass[T]{
+  def myMethod(...): XYZ
+}
+
+object MyTypeclass {
+
+  import scala.quoted.*
+
+  inline def derived[T]: MyTypeclass[T] = ${ derivedImpl[T] }
+
+  private def derivedImpl[T: Type](using Quotes): Expr[MyTypeclass[T]] = {
+    '{
+      new MyTypeclass[T] {
+        def myMethod(...): XYZ = // your typeclass method
+          ${
+            MyMacro.myMethodImpl[T](...)
+          }
+      }
+    }
+  }
+```
+where `MyMacro.myMethodImpl[T]` is a macro method using `TypeTreeIterator` with `MyMacroVisitor`.
+
+### Providing typeclass instances semi-autonomously
+
+Typeclass instances can derived semi-autonomously for each type
+```scala
+case class Y()
+object Y {
+  given MyTyepclass[Y] = new MyTypeclass[Y]{
+    def myMethod(...): XYZ = // your typeclass method
+      MyMacro.myMethod(...)
+  }
+}
+```
+
+### Preventing circular derivation calls
+
+The `TypeTreeIterator.visitNode` method has a `summonTypeclassInstance` parameter which must set `false` for a toplevel call to prevent circular calls between macro method and typeclass derivation method. All the subsequent calls to the `visitNode` inside `TypeTreeIterator` will receive `summonTypeclassInstance = true`.
+
+## Examples of macro
 
 Working examples of macros built with `TypeTreeVisitor`:
 

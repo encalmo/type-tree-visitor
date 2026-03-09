@@ -5,37 +5,34 @@ import scala.quoted.Expr
 import scala.quoted.Type
 import org.encalmo.utils.AnnotationUtils.AnnotationInfo
 
-/** Compute the structural runtime hashcode of a value. It will take into account structure and actual types of the
-  * nested values in runtime but not the values themselves.
+/** Compute the internal structure hashcode of a type for a deep comparison if two types have the same fields and types.
   */
-object StructuralRuntimeHashcode {
+object InternalStructureHashcode {
 
   private inline def debugMode = false
 
-  inline def compute[T](value: T): Int = {
-    ${ computeImpl[T]('{ value }) }
+  inline def compute[T]: Int = {
+    ${ computeImpl[T] }
   }
 
-  private def computeImpl[T: Type](expr: Expr[T])(using Quotes): Expr[Int] = {
+  private def computeImpl[T: Type](using Quotes): Expr[Int] = {
     import cache.quotes.reflect.*
     given cache: StatementsCache = new StatementsCache
-    computeUsingTypeTreeIterator(using cache)(TypeRepr.of[T], expr.asTerm)
+    computeUsingTypeTreeIterator(using cache)(TypeRepr.of[T])
     cache.asExprOf[Int]
   }
 
   private def computeUsingTypeTreeIterator(using
       cache: StatementsCache
   )(
-      tpe: cache.quotes.reflect.TypeRepr,
-      valueTerm: cache.quotes.reflect.Term
+      tpe: cache.quotes.reflect.TypeRepr
   ): Unit = {
-    val context = new StructuralRuntimeHashcodeMacroContext
+    val context = new InternalStructureHashcodeMacroContext(firstNode = true)
     val trace = scala.collection.mutable.Buffer.empty[String]
 
     context.initialize(using cache)
-    TypeTreeIterator.visitNode(using cache, StructuralRuntimeHashcodeMacroVisitor)(
+    TypeTreeTermlessIterator.visitNode(using cache, InternalStructureHashcodeMacroVisitor)(
       tpe = tpe,
-      valueTerm = valueTerm,
       context = context,
       isCollectionItem = false,
       annotations = Set.empty,
@@ -56,7 +53,7 @@ object StructuralRuntimeHashcode {
   }
 }
 
-class StructuralRuntimeHashcodeMacroContext {
+case class InternalStructureHashcodeMacroContext(firstNode: Boolean) {
 
   def initialize(using cache: StatementsCache): Unit = {
     given cache.quotes.type = cache.quotes
@@ -64,19 +61,12 @@ class StructuralRuntimeHashcodeMacroContext {
   }
 
   /** Update hashcode by each value's type name encountered in the type tree. */
-  def updateHashcode(using cache: StatementsCache)(valueTerm: cache.quotes.reflect.Term): Unit = {
+  def updateHashcode(using cache: StatementsCache)(s: String): Unit = {
+    import cache.quotes.reflect.*
     cache.put(
       cache
         .getValueRef("hashcode")
-        .methodCall(
-          "update",
-          List(
-            valueTerm
-              .maybeMethodCall("getClass", List())
-              .map(_.methodCall("getName", List()))
-              .getOrElse(valueTerm.applyToString)
-          )
-        )
+        .methodCall("update", List(Literal(StringConstant(s))))
     )
   }
 
@@ -87,21 +77,41 @@ class StructuralRuntimeHashcodeMacroContext {
   override def toString(): String = ""
 }
 
-object StructuralRuntimeHashcodeMacroVisitor extends SimpleTypeTreeVisitor {
+object InternalStructureHashcodeMacroVisitor extends SimpleTypeTreeTermlessVisitor {
 
-  type Context = StructuralRuntimeHashcodeMacroContext
+  type Context = InternalStructureHashcodeMacroContext
 
   /** Before visiting a node in the type tree. */
   inline override def beforeNode(using
       cache: StatementsCache
   )(
       tpe: cache.quotes.reflect.TypeRepr,
-      valueTerm: cache.quotes.reflect.Term,
       annotations: Set[AnnotationInfo],
       isCollectionItem: Boolean,
       context: Context
   ): (Context, Set[AnnotationInfo]) =
-    context.updateHashcode(valueTerm)
-    (context, annotations)
+    if context.firstNode
+    then (context.copy(firstNode = false), annotations)
+    else
+      context.updateHashcode(tpe.show(using cache.quotes.reflect.Printer.TypeReprCode))
+      (context, annotations)
+
+  inline override def visitProductField(using
+      cache: StatementsCache
+  )(
+      tpe: cache.quotes.reflect.TypeRepr,
+      name: TagName,
+      annotations: Set[AnnotationInfo],
+      context: Context,
+      visitNode: TypeTreeTermlessIterator.VisitNodeFunction
+  ): Unit = {
+    context.updateHashcode(name.show(using cache))
+    visitNode(using cache, this)(
+      tpe = tpe,
+      annotations = annotations,
+      isCollectionItem = false,
+      context = context
+    )
+  }
 
 }

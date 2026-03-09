@@ -30,7 +30,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       valueTerm: cache.quotes.reflect.Term,
       annotations: Set[AnnotationInfo],
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit =
     visitNode(using cache, this)(
       tpe = tpe,
@@ -72,7 +72,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       annotations: Set[AnnotationInfo],
       isCollectionItem: Boolean,
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit =
     visitNode(using cache, this)(
       tpe = tpe,
@@ -147,7 +147,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       indexTerm: cache.quotes.reflect.Term,
       annotations: Set[AnnotationInfo],
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit =
     visitNode(using cache, this)(
       tpe = tpe,
@@ -181,7 +181,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       annotations: Set[AnnotationInfo],
       isCollectionItem: Boolean,
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Option[Unit] = None
 
   /** Maybe summon an existing typeclass instance to process the node instead of walking down the tree further. Default
@@ -204,7 +204,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       annotations: Set[AnnotationInfo],
       isCollectionItem: Boolean,
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit = {
     visitNode(using cache, this)(
       tpe = tpe,
@@ -236,7 +236,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       annotations: Set[AnnotationInfo],
       isCollectionItem: Boolean,
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit = {
     visitNode(using cache, this)(
       tpe = tpe,
@@ -258,7 +258,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       annotations: Set[AnnotationInfo],
       isCollectionItem: Boolean,
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit = {
     visitNode(using cache, this)(
       tpe = tpe,
@@ -281,7 +281,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       annotations: Set[AnnotationInfo],
       isCollectionItem: Boolean,
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit = {
     given cache.quotes.type = cache.quotes
     upperBoundTpe match {
@@ -323,7 +323,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       valueTerm: cache.quotes.reflect.Term,
       annotations: Set[AnnotationInfo],
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit =
     visitProductField(tpe, name, valueTerm, annotations, context, visitNode)
 
@@ -357,9 +357,9 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       annotations: Set[AnnotationInfo],
       isCollectionItem: Boolean,
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit =
-    visitSumCase(tpe, name, valueTerm, annotations, isCollectionItem, context, visitNode)
+    visitAsString(tpe, valueTerm, context)
 
   /** Visit a case class of an enum node in the type tree. */
   override def visitEnumCaseClass(using
@@ -371,7 +371,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       annotations: Set[AnnotationInfo],
       isCollectionItem: Boolean,
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit =
     visitSumCase(tpe, name, valueTerm, annotations, isCollectionItem, context, visitNode)
 
@@ -404,7 +404,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       indexTerm: cache.quotes.reflect.Term,
       annotations: Set[AnnotationInfo],
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit =
     visitCollectionItem(tpe, valueTerm, indexTerm, annotations, context, visitNode)
 
@@ -437,7 +437,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       indexTerm: cache.quotes.reflect.Term,
       annotations: Set[AnnotationInfo],
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit =
     visitCollectionItem(tpe, valueTerm, indexTerm, annotations, context, visitNode)
 
@@ -470,7 +470,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       valueTerm: cache.quotes.reflect.Term,
       annotations: Set[AnnotationInfo],
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit =
     visitProductField(tpe, name, valueTerm, annotations, context, visitNode)
 
@@ -504,7 +504,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       valueTerm: cache.quotes.reflect.Term,
       annotations: Set[AnnotationInfo],
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit =
     visitProductField(tpe, name, valueTerm, annotations, context, visitNode)
 
@@ -537,7 +537,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       annotations: Set[AnnotationInfo],
       isCollectionItem: Boolean,
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit = {
     given cache.quotes.type = cache.quotes
     visitSumCase(tpe, TypeNameUtils.typeNameOf(tpe), valueTerm, annotations, isCollectionItem, context, visitNode)
@@ -572,7 +572,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       indexTerm: cache.quotes.reflect.Term,
       annotations: Set[AnnotationInfo],
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit =
     visitCollectionItem(tpe, valueTerm, indexTerm, annotations, context, visitNode)
 
@@ -606,7 +606,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       valueTerm: cache.quotes.reflect.Term,
       annotations: Set[AnnotationInfo],
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit =
     visitProductField(tpe, TagName(keyTerm), valueTerm, annotations, context, visitNode)
 
@@ -641,7 +641,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       valueTerm: cache.quotes.reflect.Term,
       annotations: Set[AnnotationInfo],
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit =
     visitMapEntry(tpe, keyTerm, valueTerm, annotations, context, visitNode)
 
@@ -673,7 +673,7 @@ trait SimpleTypeTreeVisitor extends TypeTreeVisitor {
       valueTerm: cache.quotes.reflect.Term,
       annotations: Set[AnnotationInfo],
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit =
     visitProductField(tpe, name, valueTerm, annotations, context, visitNode)
 

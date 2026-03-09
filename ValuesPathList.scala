@@ -80,7 +80,7 @@ object ValuesPathListMacroVisitor extends SimpleTypeTreeVisitor {
       valueTerm: cache.quotes.reflect.Term,
       annotations: Set[AnnotationInfo],
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit = {
     visitNode(using cache, this)(
       tpe = tpe,
@@ -99,7 +99,7 @@ object ValuesPathListMacroVisitor extends SimpleTypeTreeVisitor {
       indexTerm: cache.quotes.reflect.Term,
       annotations: Set[AnnotationInfo],
       context: Context,
-      visitNode: VisitNodeFunction
+      visitNode: TypeTreeIterator.VisitNodeFunction
   ): Unit = {
     given cache.quotes.type = cache.quotes
     visitNode(using cache, this)(
@@ -122,8 +122,8 @@ object ValuesPathListMacroVisitor extends SimpleTypeTreeVisitor {
       given cache.quotes.type = cache.quotes
       import cache.quotes.reflect.*
       val pathTerm = context.reverse.map(i => i.asInstanceOf[cache.quotes.reflect.Term]) match {
-        case Nil          => StatementsCache.stringLiteral("")
-        case head :: Nil  => head
+        case Nil         => StatementsCache.stringLiteral("")
+        case head :: Nil => head
         case head :: tail =>
           tail.foldLeft(head) { (acc, term) =>
             acc.methodCall(
