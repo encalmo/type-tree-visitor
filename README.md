@@ -44,11 +44,11 @@ This library provides `TypeTreeIterator` object and `TypeTreeVisitor` trait, two
 
 Use with SBT
 
-    libraryDependencies += "org.encalmo" %% "type-tree-visitor" % "0.9.0"
+    libraryDependencies += "org.encalmo" %% "type-tree-visitor" % "0.10.0"
 
 or with SCALA-CLI
 
-    //> using dep org.encalmo::type-tree-visitor:0.9.0
+    //> using dep org.encalmo::type-tree-visitor:0.10.0
 
 ## How to start?
 
