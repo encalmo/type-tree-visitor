@@ -22,7 +22,17 @@
 
 ## Motivation
 
-This library provides `TypeTreeIterator` object and `TypeTreeVisitor` trait, two essential building blocks for Scala 3 macros aiming at efficiently and effortlessly deriving code based on some type tree traversal. The pattern implemented here has been developed for and later extracted from the [xmlwriter](https://github.com/encalmo/xmlwriter) macro codebase. While there are multiple established ways of implementing macros using inline/mirrors, or quotes/splices, or [hearth](https://github.com/MateuszKubuszok/hearth) library, there can be multiple reasons to use this toolset instead:
+Writing Scala 3 macros that derive code from type structures is genuinely hard. Whether you're using inline/mirrors, quotes/splices, or rolling something custom, you end up re-implementing the same traversal logic over and over — handling case classes, sealed traits, enums, tuples, named tuples, Java records, opaque types, collections... it's a lot of boilerplate before you even get to the interesting part of your macro.
+
+What this library gives you are two core building blocks:
+
+- `TypeTreeIterator` — a fully implemented iterator that walks a type tree recursively, with support for a very wide set of types out of the box (Scala case classes, sealed traits, collections, arrays, enums, tuples, named tuples, selectables, opaque types, primitives, Java enums, records, maps, iterables, and more)
+- `TypeTreeVisitor` — an open trait you implement to do the actual code-generation work at each node
+
+The pattern is the classic Visitor pattern, which means the iterator logic and your derivation logic are cleanly separated. You focus on what to do at each type node — the library handles how to get there.
+It also ships with a `TypeTreeTermlessIterator` / `TypeTreeTermlessVisitor` pair for cases where you don't need access to the actual runtime value (faster + simpler).
+
+The pattern implemented here has been developed for and later extracted from the [xmlwriter](https://github.com/encalmo/xmlwriter) macro codebase. While there are multiple established ways of implementing macros using inline/mirrors, or quotes/splices, or [hearth](https://github.com/MateuszKubuszok/hearth) library, there can be multiple reasons to use this toolset instead:
 
 - familiar [visitor pattern](https://refactoring.guru/design-patterns/visitor)
 - full support for manual, autonomous and semi-autonomous typeclass derivation modes
