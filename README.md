@@ -18,6 +18,8 @@
    - [[XmlWriter](https://github.com/encalmo/xmlwriter)](#[xmlwriter](https://github.com/encalmo/xmlwriter))
    - [[StructuralRuntimeHashcode](StructuralRuntimeHashcode.scala)](#[structuralruntimehashcode](structuralruntimehashcode.scala))
    - [[ValuePathsList](ValuePathsList.scala)](#[valuepathslist](valuepathslist.scala))
+   - [[InternalStructureHashcode](InternalStructureHashcode.scala)](#[internalstructurehashcode](internalstructurehashcode.scala))
+   - [[DrawTypeTree](DrawTypeTree.scala)](#[drawtypetree](drawtypetree.scala))
 - [Project content](#project-content)
 
 ## Motivation
@@ -266,6 +268,8 @@ println(structure)
 │
 ├── .gitignore
 ├── .scalafmt.conf
+├── DrawTypeTree.scala
+├── DrawTypeTree.test.scala
 ├── Hashcode.scala
 ├── InternalStructureHashcode.scala
 ├── InternalStructureHashcode.test.scala
