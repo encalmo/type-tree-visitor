@@ -234,6 +234,26 @@ val paths: List[String] = ValuePathsList.compute(instance)
 println(paths.mkString("\n"))
 ```
 
+### [InternalStructureHashcode](InternalStructureHashcode.scala)
+Simple demo macro computing a hashcode that purely reflects a value's internal type structure, disregarding the actual field values. This is useful for comparing the shape or structure of different types at runtime.
+
+```scala
+import org.encalmo.utils.InternalStructureHashcode
+
+val hashcode: Int = InternalStructureHashcode.compute[MyType]
+println(hashcode)
+```
+
+### [DrawTypeTree](DrawTypeTree.scala)
+
+Utility macro for visualizing the structure of any Scala type as an ASCII art tree, making it easy to understand nested structures and compositions in types at a glance. This is especially useful for debugging complex case classes, sealed trait hierarchies, tuples, collections, and other elaborate Scala types.
+
+```scala
+import org.encalmo.utils.DrawTypeTree
+
+val structure: String = DrawTypeTree.draw[Person]
+println(structure)
+```
 
 ## Project content
 

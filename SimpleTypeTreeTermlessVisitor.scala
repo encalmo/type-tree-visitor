@@ -488,7 +488,7 @@ trait SimpleTypeTreeTermlessVisitor extends TypeTreeTermlessVisitor {
       context: Context,
       visitNode: TypeTreeTermlessIterator.VisitNodeFunction
   ): Unit =
-    visitProductField(tpe, TagName("<unknown>"), annotations, context, visitNode)
+    visitProductField(tpe, TagName("<key>"), annotations, context, visitNode)
 
   /** After visiting a Map node in the type tree. */
   def afterMap(using
